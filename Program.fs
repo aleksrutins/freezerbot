@@ -5,6 +5,7 @@ open Discord
 open Discord.WebSocket
 open dotenv.net
 open Freezer.Commands.Registrar
+open Freezer.Commands.Freeze
 // For more information see https://aka.ms/fsharp-console-apps
 
 let log msg =
@@ -12,7 +13,11 @@ let log msg =
     Task.CompletedTask
 
 let mutable client: DiscordSocketClient = null
-let guildId = ""
+let slashCommandHandler (cmd: SocketSlashCommand) =
+    cmd |> 
+        match cmd.Data.Name with
+            | "freeze" -> freeze
+            | a -> (fun _ -> cmd.RespondAsync($"Unknown command: {a}"))
 
 let clientReady () =
     //registerCommands client
@@ -22,6 +27,7 @@ let mainAsync () =
     client <- new DiscordSocketClient()
     client.add_Log log
     client.add_Ready (fun () -> clientReady())
+    client.add_SlashCommandExecuted slashCommandHandler
     let token = Environment.GetEnvironmentVariable("DISCORD_TOKEN")
     Async.Sequential ([|
         client.LoginAsync(TokenType.Bot, token)

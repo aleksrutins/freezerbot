@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FreezeCommand.fs" />
     <Compile Include="CommandUtil.fs" />
     <Compile Include="CommandRegistrar.fs" />
     <Compile Include="Program.fs" />

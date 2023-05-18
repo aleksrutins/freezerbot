@@ -7,13 +7,30 @@ open Microsoft.EntityFrameworkCore.Infrastructure
 open Microsoft.EntityFrameworkCore.Metadata
 open Microsoft.EntityFrameworkCore.Migrations
 open Microsoft.EntityFrameworkCore.Storage.ValueConversion
-open Npgsql.EntityFrameworkCore.PostgreSQL.Metadata
 
 [<DbContext(typeof<RepositoryModel.RepositoryContext>)>]
-type RepositoryContextModelSnapshot() =
-    inherit ModelSnapshot()
+[<Migration("20230518164103_AddGuilds")>]
+type AddGuilds() =
+    inherit Migration()
 
-    override this.BuildModel(modelBuilder: ModelBuilder) =
+    override this.Up(migrationBuilder:MigrationBuilder) =
+        migrationBuilder.AddColumn<decimal>(
+            name = "GuildID"
+            ,table = "Repositories"
+            ,``type`` = "numeric(20,0)"
+            ,nullable = false
+            ,defaultValue = 0.000000m
+            ) |> ignore
+
+
+    override this.Down(migrationBuilder:MigrationBuilder) =
+        migrationBuilder.DropColumn(
+            name = "GuildID"
+            ,table = "Repositories"
+            ) |> ignore
+
+
+    override this.BuildTargetModel(modelBuilder: ModelBuilder) =
         modelBuilder
             .HasAnnotation("ProductVersion", "6.0.16")
             .HasAnnotation("Relational:MaxIdentifierLength", 63) |> ignore

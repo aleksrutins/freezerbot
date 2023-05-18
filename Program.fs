@@ -20,7 +20,9 @@ let slashCommandHandler (cmd: SocketSlashCommand) =
             | a -> (fun _ -> cmd.RespondAsync($"Unknown command: {a}"))
 
 let clientReady () =
-    //registerCommands client
+    let servers = client.Guilds.Count
+    log $"Running in {servers} servers" |> ignore
+    //registerCommands client |> Async.StartAsTask
     Task.CompletedTask
 
 let mainAsync () =

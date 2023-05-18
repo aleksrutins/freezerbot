@@ -14,6 +14,10 @@ let registerCommands (client: DiscordSocketClient) =
             |] |> ignore
         }
         Async.Parallel ([|
+            (slashCommand "link-repo" "Link a repository to this server" [|
+                slashOpt "repo" ApplicationCommandOptionType.String "The name of the repository to link" true
+            |]).Build()
+
             (slashCommand "freeze" "Freeze the codebase" [||]).Build()
 
             

@@ -9,6 +9,7 @@ open EntityFrameworkCore.FSharp.Extensions
 [<CLIMutable>]
 type Repository = {
     [<Key>] Name: string
+    mutable GuildID: uint64
     mutable Frozen: bool
 }
 

@@ -4,6 +4,7 @@ open System.Threading.Tasks
 open Discord
 open Discord.WebSocket
 open dotenv.net
+open Freezer.Commands.Registrar
 // For more information see https://aka.ms/fsharp-console-apps
 
 let log msg =
@@ -13,44 +14,9 @@ let log msg =
 let mutable client: DiscordSocketClient = null
 let guildId = ""
 
-let slashCommand name desc options =
-    let cmd =
-        (new SlashCommandBuilder())
-            .WithName(name)
-            .WithDescription(desc)
-    
-    options |> (Array.fold (fun cmd opt -> (cmd :> SlashCommandBuilder).AddOption(opt)) cmd)
-
-let slashOpt name t desc required = (new SlashCommandOptionBuilder()).WithName(name).WithType(t).WithDescription(desc).WithRequired(required)
-
-let slashOptSelect<'t> name desc required (choices: (string * int) array) = 
-    let opt = (slashOpt name ApplicationCommandOptionType.Integer desc required)
-    choices |> (Array.fold 
-        (fun opt choice -> 
-            let (name, value) = choice
-            (opt :> SlashCommandOptionBuilder).AddChoice(name, value)) opt)
-
-let registerCommands () =
-    Async.Parallel ([|
-        (slashCommand "freeze" "Freeze the codebase" [||]).Build()
-
-        
-        (slashCommand "thaw" "Unfreeze the codebase" [||]).Build()
-
-        (slashCommand "request-unfreeze" "Request a code freeze exception" [| 
-            slashOpt "branch" ApplicationCommandOptionType.String "The branch to create a request for" true 
-        |]).Build()
-        
-        (slashCommand "status" "View the current status of the codebase." [||]).Build()
-
-        (slashCommand "review" "Review an unfreeze request" [|
-            slashOpt "branch" ApplicationCommandOptionType.String "The branch to review for" true
-            slashOptSelect "review" "Your review" true [| ("reject", 0); ("accept", 1) |]
-        |]).Build()
-    |] |> Array.map client.CreateGlobalApplicationCommandAsync |> Array.map Async.AwaitTask)
-
 let clientReady () =
-    registerCommands () |> Async.Ignore |> Async.StartAsTask
+    //registerCommands client
+    Task.CompletedTask
 
 let mainAsync () =
     client <- new DiscordSocketClient()

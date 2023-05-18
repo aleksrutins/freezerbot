@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serenity = "0.10"
-poise = { git = "https://github.com/kangalioo/poise" }
+serenity = "0.11"
+poise = "0.5"
 tokio = { version = "1", features = ["full"] }
 dotenv = "0"
 mongodb = "2.1"

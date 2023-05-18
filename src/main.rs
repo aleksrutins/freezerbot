@@ -1,14 +1,12 @@
 use async_once::AsyncOnce;
 use dotenv::dotenv;
-use futures::stream::TryStreamExt;
-use lazy_static::__Deref;
 use mongodb::{
-    bson::{doc, Bson},
-    options::{ClientOptions, FindOneAndUpdateOptions, FindOneOptions},
+    bson::doc,
+    options::{ClientOptions, FindOneAndUpdateOptions},
     Client, Database,
 };
-use poise::serenity_prelude::{self as serenity, CreateActionRow, CreateButton};
-use std::{env, future::Future};
+use poise::serenity_prelude::{CreateActionRow, CreateButton};
+use std::env;
 use tokio::sync::{RwLock, RwLockReadGuard};
 mod types;
 
@@ -128,10 +126,10 @@ async fn request_unfreeze(
             true => {
                 let row = CreateActionRow::default()
                 .add_button(
-                    *CreateButton::default()
-                    .label("Approve")
+                    CreateButton::default()
+                    .label("Approve").to_owned()
                 )
-                .add_button(*CreateButton::default().label("Deny"));
+                .add_button(CreateButton::default().label("Deny").to_owned()).to_owned();
                 ctx.send(|f| f
                     .content(format!(":white_check_mark: Successfully created an unfreeze request for `{}`.", branch))
                     .components(|f| f
@@ -147,19 +145,20 @@ async fn request_unfreeze(
 }
 
 #[poise::command(slash_command)]
+#[allow(unused_variables)]
 async fn review(
     ctx: Context<'_>,
     #[description = "Branch to request for"] branch: String,
     #[description = "Review to give"] review: String
-) {}
+) -> Result<(), Error> { Ok(()) }
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
 
-    poise::Framework::build()
+    poise::Framework::builder()
         .token(std::env::var("DISCORD_TOKEN").expect("token"))
-        .user_data_setup(move |_ctx, _ready, _framework: &poise::Framework<_, _>| {
+        .setup(move |_ctx, _ready, _framework: &poise::Framework<_, _>| {
             Box::pin(async move { Ok(Data {}) })
         })
         .options(poise::FrameworkOptions {

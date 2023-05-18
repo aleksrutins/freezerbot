@@ -61,7 +61,7 @@ let clientReady () =
 let mainAsync () =
     client <- new DiscordSocketClient()
     client.add_Log log
-    client.add_Ready clientReady
+    client.add_Ready (fun () -> clientReady())
     let token = Environment.GetEnvironmentVariable("DISCORD_TOKEN")
     Async.Sequential ([|
         client.LoginAsync(TokenType.Bot, token)
